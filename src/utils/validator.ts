@@ -1,17 +1,15 @@
-import { isEmpty, isEmail, equals } from "validator";
+import { isEmpty, equals, isEmail } from "validator";
+import { IUserDocument } from "../models/User";
 
-interface RegisterInputError {
-  username?: string;
-  password?: string;
-  email?: string;
+interface RegisterInputError extends Partial<IUserDocument> {
   confirmPassword?: string;
 }
 
 export const validateRegisterInput = (
-  username: string,
-  password: string,
-  confirmPassword: string,
-  email: string
+  username: IUserDocument["username"],
+  password: IUserDocument["password"],
+  confirmPassword: IUserDocument["password"],
+  email: IUserDocument["email"]
 ) => {
   let errors: RegisterInputError = {};
 

@@ -29,6 +29,7 @@ app.use(errorMiddleware);
 const port: any = process.env.PORT || 6060;
 
 const main = async () => {
+  mongoose.set("useCreateIndex", true);
   await mongoose.connect("mongodb://localhost:27017/tsexpress", {
     useNewUrlParser: true,
     useUnifiedTopology: true

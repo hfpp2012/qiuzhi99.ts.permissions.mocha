@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { validateRegisterInput } from "../utils/validator";
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
+import User, { IUserDocument } from "../models/User";
 
-export const postRegister = (
+export const postRegister = async (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ) => {
   try {
@@ -25,6 +26,29 @@ export const postRegister = (
         errors
       );
     }
+
+    const user = await User.findOne({ username });
+
+    if (user) {
+      throw new HttpException(UNPROCESSABLE_ENTITY, "Username is taken", {
+        username: "The username is taken"
+      });
+    }
+
+    const newUser: IUserDocument = new User({
+      username,
+      email,
+      password
+    });
+
+    const resUser: IUserDocument = await newUser.save();
+
+    res.json({
+      success: true,
+      data: {
+        user: resUser._doc
+      }
+    });
   } catch (error) {
     next(error);
   }
