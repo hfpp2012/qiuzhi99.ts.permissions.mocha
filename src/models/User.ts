@@ -1,6 +1,7 @@
-import { Schema, model, Model, Document } from "mongoose";
+import { Schema, model, Model, Document, HookNextFunction } from "mongoose";
 // import { isEmail } from "validator";
 import uuid from "uuid";
+import bcrypt from "bcryptjs";
 
 enum Role {
   basic = "basic",
@@ -52,6 +53,22 @@ const userSchema: Schema = new Schema({
   password: String,
   createdAt: String,
   uuid: { type: String, default: uuid.v4() }
+});
+
+userSchema.pre<IUserDocument>("save", async function save(
+  next: HookNextFunction
+) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 userSchema.index({ username: 1 });

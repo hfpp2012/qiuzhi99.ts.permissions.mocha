@@ -3,6 +3,8 @@ import { validateRegisterInput } from "../utils/validator";
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 import User, { IUserDocument } from "../models/User";
+// import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const postRegister = async (
   req: Request,
@@ -35,6 +37,8 @@ export const postRegister = async (
       });
     }
 
+    // const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser: IUserDocument = new User({
       username,
       email,
@@ -43,10 +47,14 @@ export const postRegister = async (
 
     const resUser: IUserDocument = await newUser.save();
 
+    const token = jwt.sign({ id: resUser.id }, process.env.JWT_SECKET_KEY!, {
+      expiresIn: "1h"
+    });
+
     res.json({
       success: true,
       data: {
-        user: resUser._doc
+        token
       }
     });
   } catch (error) {

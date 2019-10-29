@@ -4,6 +4,7 @@ import { NOT_FOUND } from "http-status-codes";
 import HttpException from "./exceptions/HttpException";
 import errorMiddleware from "./middlewares/error.middleware";
 import * as userController from "./controllers/User";
+import "dotenv/config";
 // import bodyParser from "body-parser";
 
 const app: Express = express();
