@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { Schema, model, Model, Document, HookNextFunction } from "mongoose";
 // import { isEmail } from "validator";
 import uuid from "uuid";
@@ -21,6 +22,7 @@ export interface IUserDocument extends Document {
   _doc: IUserDocument;
   role: Role;
   addresses: Address[];
+  generateToken: () => string;
 }
 
 const addressSchema: Schema = new Schema({
@@ -54,6 +56,12 @@ const userSchema: Schema = new Schema({
   createdAt: String,
   uuid: { type: String, default: uuid.v4() }
 });
+
+userSchema.methods.generateToken = function(): string {
+  return jwt.sign({ id: this.id }, process.env.JWT_SECRET_KEY!, {
+    expiresIn: "1h"
+  });
+};
 
 userSchema.pre<IUserDocument>("save", async function save(
   next: HookNextFunction

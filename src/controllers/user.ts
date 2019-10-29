@@ -4,7 +4,13 @@ import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 import User, { IUserDocument } from "../models/User";
 // import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
+
+// const generateToken = (user: IUserDocument): string => {
+//   return jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY!, {
+//     expiresIn: "1h"
+//   });
+// };
 
 export const postRegister = async (
   req: Request,
@@ -47,9 +53,7 @@ export const postRegister = async (
 
     const resUser: IUserDocument = await newUser.save();
 
-    const token = jwt.sign({ id: resUser.id }, process.env.JWT_SECKET_KEY!, {
-      expiresIn: "1h"
-    });
+    const token: string = resUser.generateToken();
 
     res.json({
       success: true,
