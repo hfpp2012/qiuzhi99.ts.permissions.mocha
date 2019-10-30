@@ -49,6 +49,7 @@ export const postRegister = async (
       username,
       email,
       password
+      // createdAt: new Date().toISOString
     });
 
     const resUser: IUserDocument = await newUser.save();
@@ -58,7 +59,8 @@ export const postRegister = async (
     res.json({
       success: true,
       data: {
-        token
+        token,
+        user: resUser._doc
       }
     });
   } catch (error) {
