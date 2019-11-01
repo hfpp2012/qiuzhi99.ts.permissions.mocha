@@ -4,6 +4,7 @@ import { NOT_FOUND } from "http-status-codes";
 import HttpException from "./exceptions/HttpException";
 import errorMiddleware from "./middlewares/error.middleware";
 import * as userController from "./controllers/User";
+import * as postController from "./controllers/Post";
 import "dotenv/config";
 // import bodyParser from "body-parser";
 
@@ -19,6 +20,9 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.post("/users/register", userController.postRegister);
+app.post("/users/login", userController.postLogin);
+
+app.get("/posts", postController.getPosts);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");

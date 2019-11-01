@@ -5,6 +5,27 @@ interface RegisterInputError extends Partial<IUserDocument> {
   confirmPassword?: string;
 }
 
+export interface LoginInputError extends Partial<IUserDocument> {
+  general?: string;
+}
+
+export const validateLoginInput = (
+  username: IUserDocument["username"],
+  password: IUserDocument["password"]
+) => {
+  let errors: LoginInputError = {};
+
+  if (isEmpty(username)) {
+    errors.username = "Username must not be empty";
+  }
+
+  if (isEmpty(password)) {
+    errors.password = "Password must not be empty";
+  }
+
+  return { errors, valid: Object.keys(errors).length < 1 };
+};
+
 export const validateRegisterInput = (
   username: IUserDocument["username"],
   password: IUserDocument["password"],

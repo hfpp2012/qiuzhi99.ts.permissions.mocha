@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { validateRegisterInput } from "../utils/validator";
+import {
+  validateRegisterInput,
+  validateLoginInput,
+  LoginInputError
+} from "../utils/validator";
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 import User, { IUserDocument } from "../models/User";
-// import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 // import jwt from "jsonwebtoken";
 
 // const generateToken = (user: IUserDocument): string => {
@@ -12,11 +16,60 @@ import User, { IUserDocument } from "../models/User";
 //   });
 // };
 
+const throwLoginValidateError = (errors: LoginInputError) => {
+  throw new HttpException(
+    UNPROCESSABLE_ENTITY,
+    "User login input error",
+    errors
+  );
+};
+
+export const postLogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { username, password } = req.body;
+
+    const { errors, valid } = validateLoginInput(username, password);
+
+    if (!valid) {
+      return throwLoginValidateError(errors);
+    }
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      errors.general = "User not found";
+      return throwLoginValidateError(errors);
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      errors.general = "Wrong credentials";
+      return throwLoginValidateError(errors);
+    }
+
+    const token = user.generateToken();
+
+    res.json({
+      success: true,
+      data: {
+        token
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const postRegister = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { username, password, confirmPassword, email } = req.body;
 
@@ -59,8 +112,7 @@ export const postRegister = async (
     res.json({
       success: true,
       data: {
-        token,
-        user: resUser._doc
+        token
       }
     });
   } catch (error) {
