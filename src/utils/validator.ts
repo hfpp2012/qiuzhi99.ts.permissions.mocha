@@ -15,11 +15,11 @@ export const validateLoginInput = (
 ) => {
   let errors: LoginInputError = {};
 
-  if (isEmpty(username)) {
+  if (isEmpty(username.trim())) {
     errors.username = "Username must not be empty";
   }
 
-  if (isEmpty(password)) {
+  if (isEmpty(password.trim())) {
     errors.password = "Password must not be empty";
   }
 
@@ -34,15 +34,15 @@ export const validateRegisterInput = (
 ) => {
   let errors: RegisterInputError = {};
 
-  if (isEmpty(username)) {
+  if (isEmpty(username.trim())) {
     errors.username = "Username must not be empty";
   }
 
-  if (isEmpty(password)) {
+  if (isEmpty(password.trim())) {
     errors.password = "Password must not be empty";
   }
 
-  if (isEmpty(confirmPassword)) {
+  if (isEmpty(confirmPassword.trim())) {
     errors.confirmPassword = "Confirmed password must not be empty";
   }
 
@@ -50,7 +50,7 @@ export const validateRegisterInput = (
     errors.confirmPassword = "Passwords must match";
   }
 
-  if (isEmpty(email)) {
+  if (isEmpty(email.trim())) {
     errors.email = "Email must not be empty";
   }
 

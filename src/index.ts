@@ -23,6 +23,7 @@ app.post("/users/register", userController.postRegister);
 app.post("/users/login", userController.postLogin);
 
 app.get("/posts", postController.getPosts);
+app.post("/posts", postController.createPost);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");
