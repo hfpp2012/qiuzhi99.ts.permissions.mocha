@@ -6,6 +6,7 @@ import errorMiddleware from "./middlewares/error.middleware";
 import * as userController from "./controllers/User";
 import * as postController from "./controllers/Post";
 import "dotenv/config";
+import checkAuthMiddleware from "./middlewares/check-auth.middleware";
 // import bodyParser from "body-parser";
 
 const app: Express = express();
@@ -22,8 +23,18 @@ app.get("/", (_req: Request, res: Response) => {
 app.post("/users/register", userController.postRegister);
 app.post("/users/login", userController.postLogin);
 
-app.get("/posts", postController.getPosts);
-app.post("/posts", postController.createPost);
+// app.get("/posts", postController.getPosts);
+// app.post("/posts", checkAuthMiddleware, postController.createPost);
+
+app
+  .route("/posts")
+  .get(postController.getPosts)
+  .post(checkAuthMiddleware, postController.createPost);
+
+app
+  .route("/posts/:id")
+  .get(postController.getPost)
+  .put(postController.updatePost);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");
