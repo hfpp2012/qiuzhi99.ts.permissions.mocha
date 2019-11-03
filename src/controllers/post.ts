@@ -3,6 +3,8 @@ import Post from "../models/Post";
 import { IUserDocument } from "../models/User";
 import { throwPostNotFoundError } from "../utils/throwError";
 import { checkBody } from "../utils/validator";
+import { UNAUTHORIZED } from "http-status-codes";
+import HttpException from "../exceptions/HttpException";
 
 export const getPosts = async (
   _req: Request,
@@ -46,7 +48,7 @@ export const getPost = async (
 
 export const updatePost = async (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
@@ -58,7 +60,56 @@ export const updatePost = async (
 
     checkBody(body);
 
+    const user = req.currentUser as IUserDocument;
+
     if (post) {
+      if (post.username === user.username) {
+        // const resPost = await post.update({ body });
+
+        const resPost = await Post.findByIdAndUpdate(
+          id,
+          { body },
+          { new: true }
+        );
+
+        res.json({
+          success: true,
+          data: { message: "updated successfully", post: resPost }
+        });
+      } else {
+        throw new HttpException(UNAUTHORIZED, "Action not allowed");
+      }
+    } else {
+      throwPostNotFoundError();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deletePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findById(id);
+
+    const user = req.currentUser as IUserDocument;
+
+    if (post) {
+      if (post.username === user.username) {
+        await Post.findByIdAndDelete(id);
+
+        res.json({
+          success: true,
+          data: { message: "deleted successfully" }
+        });
+      } else {
+        throw new HttpException(UNAUTHORIZED, "Action not allowed");
+      }
     } else {
       throwPostNotFoundError();
     }
@@ -92,6 +143,56 @@ export const createPost = async (
       success: true,
       data: { message: "created successfully", post }
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const likePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findById(id);
+
+    const user = req.currentUser as IUserDocument;
+
+    if (post) {
+      if (post.likes.find(like => like.username === user.username)) {
+        post.likes = post.likes.filter(like => like.username !== user.username);
+
+        // user.like_posts = user.like_posts.filter(
+        //   post => post.username !== user.username
+        // );
+
+        // user.like_posts = user.like_posts.filter(
+        //   id => !user.like_posts.includes(id)
+        // indexOf
+        // );
+      } else {
+        post.likes.push({
+          username: user.username,
+          createdAt: new Date().toISOString()
+        });
+
+        // user.like_posts.push(post);
+        // user.like_posts.push(post.id);
+      }
+
+      await post.save();
+
+      await user.save();
+
+      res.json({
+        success: true,
+        data: { post }
+      });
+    } else {
+      throwPostNotFoundError();
+    }
   } catch (error) {
     next(error);
   }

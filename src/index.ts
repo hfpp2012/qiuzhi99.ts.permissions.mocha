@@ -34,7 +34,10 @@ app
 app
   .route("/posts/:id")
   .get(postController.getPost)
-  .put(postController.updatePost);
+  .put(checkAuthMiddleware, postController.updatePost)
+  .delete(checkAuthMiddleware, postController.deletePost);
+
+app.post("/posts/:id/like", checkAuthMiddleware, postController.likePost);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");

@@ -57,7 +57,8 @@ export const postLogin = async (
     res.json({
       success: true,
       data: {
-        token
+        token,
+        user
       }
     });
   } catch (error) {

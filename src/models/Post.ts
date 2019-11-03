@@ -1,14 +1,20 @@
 import { Schema, model, Document } from "mongoose";
 import { IUserDocument } from "./User";
 
-interface IPostDocument extends Document {
-  body: string;
-  createdAt: string;
-  username: string;
-  user: IUserDocument["_id"];
+interface Like {
+  username: IPostDocument["username"];
+  createdAt: IPostDocument["createdAt"];
 }
 
-const postSchema: Schema = new Schema({
+export interface IPostDocument extends Document {
+  body: string;
+  createdAt: string;
+  username: IUserDocument["username"];
+  user: IUserDocument["_id"];
+  likes: Like[];
+}
+
+export const postSchema: Schema = new Schema({
   body: String,
   createdAt: String,
   username: String,
@@ -16,7 +22,13 @@ const postSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users",
     required: true
-  }
+  },
+  likes: [
+    {
+      username: String,
+      createdAt: String
+    }
+  ]
 });
 
 const Post = model<IPostDocument>("Post", postSchema);

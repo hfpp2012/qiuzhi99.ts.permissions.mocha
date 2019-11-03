@@ -11,6 +11,7 @@ import {
 import uuid from "uuid";
 import bcrypt from "bcryptjs";
 import { JwtPayload } from "../types/Jwt";
+import { IPostDocument } from "./Post";
 
 enum Role {
   basic = "basic",
@@ -37,6 +38,8 @@ export interface IUserDocument extends Document {
   updatedAt: string;
   addresses: Address[];
   generateToken: () => string;
+  // like_posts: IPostDocument[];
+  // like_posts: IPostDocument["_id"][];
 }
 
 const addressSchema: Schema = new Schema({
@@ -69,6 +72,13 @@ const userSchema: Schema = new Schema(
     addresses: { type: [addressSchema] },
     password: String,
     uuid: { type: String, default: uuid.v4() }
+    // like_posts: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "posts"
+    //   }
+    // ],
+    // like_posts: { type: [postSchema] }
   },
   { timestamps: true }
 );
