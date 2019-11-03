@@ -39,7 +39,7 @@ export interface IUserDocument extends Document {
   addresses: Address[];
   generateToken: () => string;
   // like_posts: IPostDocument[];
-  // like_posts: IPostDocument["_id"][];
+  like_posts: IPostDocument["_id"][];
 }
 
 const addressSchema: Schema = new Schema({
@@ -71,13 +71,13 @@ const userSchema: Schema = new Schema(
     },
     addresses: { type: [addressSchema] },
     password: String,
-    uuid: { type: String, default: uuid.v4() }
-    // like_posts: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "posts"
-    //   }
-    // ],
+    uuid: { type: String, default: uuid.v4() },
+    like_posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Post"
+      }
+    ]
     // like_posts: { type: [postSchema] }
   },
   { timestamps: true }

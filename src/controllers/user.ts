@@ -38,7 +38,7 @@ export const postLogin = async (
       return throwLoginValidateError(errors);
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).populate("like_posts");
 
     if (!user) {
       errors.general = "User not found";
@@ -57,8 +57,7 @@ export const postLogin = async (
     res.json({
       success: true,
       data: {
-        token,
-        user
+        token
       }
     });
   } catch (error) {

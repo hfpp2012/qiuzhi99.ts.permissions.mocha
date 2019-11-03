@@ -31,7 +31,7 @@ export const getPost = async (
   try {
     const { id } = req.params;
 
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).populate("user", "-password");
 
     if (post) {
       res.json({
@@ -168,10 +168,9 @@ export const likePost = async (
         //   post => post.username !== user.username
         // );
 
-        // user.like_posts = user.like_posts.filter(
-        //   id => !user.like_posts.includes(id)
-        // indexOf
-        // );
+        user.like_posts = user.like_posts.filter(
+          id => !user.like_posts.includes(id)
+        );
       } else {
         post.likes.push({
           username: user.username,
@@ -179,7 +178,7 @@ export const likePost = async (
         });
 
         // user.like_posts.push(post);
-        // user.like_posts.push(post.id);
+        user.like_posts.push(post.id);
       }
 
       await post.save();

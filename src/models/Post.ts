@@ -20,7 +20,7 @@ export const postSchema: Schema = new Schema({
   username: String,
   user: {
     type: Schema.Types.ObjectId,
-    ref: "users",
+    ref: "User",
     required: true
   },
   likes: [
