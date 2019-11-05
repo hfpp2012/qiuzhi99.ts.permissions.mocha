@@ -7,16 +7,35 @@ import { UNAUTHORIZED } from "http-status-codes";
 import HttpException from "../exceptions/HttpException";
 
 export const getPosts = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const posts = await Post.find();
+    const { page } = req.query;
+    const myCustomLabels = {
+      totalDocs: "total_count",
+      docs: "posts",
+      limit: "limit_value",
+      page: "current_page",
+      nextPage: "next",
+      prevPage: "prev",
+      totalPages: "num_pages",
+      pagingCounter: "slNo",
+      meta: "page"
+    };
+
+    const options = {
+      page: page,
+      limit: 2,
+      customLabels: myCustomLabels
+    };
+
+    const posts = await Post.paginate({}, options);
 
     res.json({
       success: true,
-      data: { posts }
+      data: posts
     });
   } catch (error) {
     next(error);

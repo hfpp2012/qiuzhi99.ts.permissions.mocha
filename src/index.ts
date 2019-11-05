@@ -7,9 +7,12 @@ import * as userController from "./controllers/User";
 import * as postController from "./controllers/Post";
 import "dotenv/config";
 import checkAuthMiddleware from "./middlewares/check-auth.middleware";
+import morgan from "morgan";
 // import bodyParser from "body-parser";
 
 const app: Express = express();
+
+app.use(morgan("dev"));
 
 // app.use(bodyParser.json());
 app.use(express.json());

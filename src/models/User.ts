@@ -104,6 +104,7 @@ userSchema.static("orderByUsernameDesc", () => {
 });
 
 userSchema.pre<IUserDocument>("save", async function save(
+  this: IUserDocument,
   next: HookNextFunction
 ) {
   // if (this.isNew) {
