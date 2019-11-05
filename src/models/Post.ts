@@ -7,6 +7,13 @@ interface Like {
   createdAt: IPostDocument["createdAt"];
 }
 
+interface Comment {
+  username: IPostDocument["username"];
+  createdAt: IPostDocument["createdAt"];
+  body: IPostDocument["body"];
+  id?: IPostDocument["_id"];
+}
+
 interface IPostModel extends PaginateModel<IPostDocument> {}
 
 export interface IPostDocument extends Document {
@@ -15,6 +22,7 @@ export interface IPostDocument extends Document {
   username: IUserDocument["username"];
   user: IUserDocument["_id"];
   likes: Like[];
+  comments: Comment[];
 }
 
 export const postSchema: Schema = new Schema({
@@ -29,6 +37,13 @@ export const postSchema: Schema = new Schema({
   likes: [
     {
       username: String,
+      createdAt: String
+    }
+  ],
+  comments: [
+    {
+      username: String,
+      body: String,
       createdAt: String
     }
   ]

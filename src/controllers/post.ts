@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import Post from "../models/Post";
 import { IUserDocument } from "../models/User";
-import { throwPostNotFoundError } from "../utils/throwError";
+import {
+  throwPostNotFoundError,
+  throwActionNotAllowedError
+} from "../utils/throwError";
 import { checkBody } from "../utils/validator";
-import { UNAUTHORIZED } from "http-status-codes";
-import HttpException from "../exceptions/HttpException";
 
 export const getPosts = async (
   req: Request,
@@ -96,7 +97,7 @@ export const updatePost = async (
           data: { message: "updated successfully", post: resPost }
         });
       } else {
-        throw new HttpException(UNAUTHORIZED, "Action not allowed");
+        throwActionNotAllowedError();
       }
     } else {
       throwPostNotFoundError();
@@ -127,7 +128,7 @@ export const deletePost = async (
           data: { message: "deleted successfully" }
         });
       } else {
-        throw new HttpException(UNAUTHORIZED, "Action not allowed");
+        throwActionNotAllowedError();
       }
     } else {
       throwPostNotFoundError();

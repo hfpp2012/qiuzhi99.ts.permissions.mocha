@@ -3,16 +3,21 @@ import mongoose from "mongoose";
 import { NOT_FOUND } from "http-status-codes";
 import HttpException from "./exceptions/HttpException";
 import errorMiddleware from "./middlewares/error.middleware";
-import * as userController from "./controllers/User";
-import * as postController from "./controllers/Post";
+import * as userController from "./controllers/user";
+import * as postController from "./controllers/post";
+import * as commentsController from "./controllers/comments";
 import "dotenv/config";
 import checkAuthMiddleware from "./middlewares/check-auth.middleware";
 import morgan from "morgan";
+import helmet from "helmet";
+import cors from "cors";
 // import bodyParser from "body-parser";
 
 const app: Express = express();
 
 app.use(morgan("dev"));
+app.use(helmet());
+app.use(cors());
 
 // app.use(bodyParser.json());
 app.use(express.json());
@@ -42,6 +47,18 @@ app
 
 app.post("/posts/:id/like", checkAuthMiddleware, postController.likePost);
 
+app.post(
+  "/posts/:id/comments",
+  checkAuthMiddleware,
+  commentsController.createComment
+);
+
+app.delete(
+  "/posts/:id/comments/:commentId",
+  checkAuthMiddleware,
+  commentsController.deleteComment
+);
+
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");
   next(error);
@@ -53,6 +70,7 @@ const port: any = process.env.PORT || 6060;
 
 const main = async () => {
   mongoose.set("useCreateIndex", true);
+  mongoose.set("useFindAndModify", false);
   await mongoose.connect("mongodb://localhost:27017/tsexpress", {
     useNewUrlParser: true,
     useUnifiedTopology: true
