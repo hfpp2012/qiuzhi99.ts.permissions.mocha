@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import * as postController from "../controllers/post";
+import * as postsController from "../controllers/posts";
 import * as commentsController from "../controllers/comments";
 import checkAuthMiddleware from "../middlewares/check-auth.middleware";
 
@@ -7,16 +7,16 @@ let router: Router = express.Router();
 
 router
   .route("/")
-  .get(postController.getPosts)
-  .post(checkAuthMiddleware, postController.createPost);
+  .get(postsController.getPosts)
+  .post(checkAuthMiddleware, postsController.createPost);
 
 router
   .route("/:id")
-  .get(postController.getPost)
-  .put(checkAuthMiddleware, postController.updatePost)
-  .delete(checkAuthMiddleware, postController.deletePost);
+  .get(postsController.getPost)
+  .put(checkAuthMiddleware, postsController.updatePost)
+  .delete(checkAuthMiddleware, postsController.deletePost);
 
-router.post("/:id/like", checkAuthMiddleware, postController.likePost);
+router.post("/:id/like", checkAuthMiddleware, postsController.likePost);
 
 router.post(
   "/:id/comments",
