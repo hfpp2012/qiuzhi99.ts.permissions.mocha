@@ -1,10 +1,10 @@
-import { isEmpty, equals, isEmail } from "validator";
+import { isEmpty, equals, isEmail, isLength } from "validator";
 import { IUserDocument } from "../models/User";
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 
 interface RegisterInputError extends Partial<IUserDocument> {
-  confirmPassword?: string;
+  confirmPassword?: IUserDocument["password"];
 }
 
 export interface LoginInputError extends Partial<IUserDocument> {
@@ -38,6 +38,10 @@ export const validateRegisterInput = (
 
   if (isEmpty(username.trim())) {
     errors.username = "Username must not be empty";
+  }
+
+  if (isLength(username.trim(), { min: 6 })) {
+    errors.username = "Username must be at least 6 characters long";
   }
 
   if (isEmpty(password.trim())) {

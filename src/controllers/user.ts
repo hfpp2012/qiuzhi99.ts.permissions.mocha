@@ -8,13 +8,6 @@ import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 import User, { IUserDocument } from "../models/User";
 import bcrypt from "bcryptjs";
-// import jwt from "jsonwebtoken";
-
-// const generateToken = (user: IUserDocument): string => {
-//   return jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY!, {
-//     expiresIn: "1h"
-//   });
-// };
 
 const throwLoginValidateError = (errors: LoginInputError) => {
   throw new HttpException(
@@ -38,7 +31,7 @@ export const postLogin = async (
       return throwLoginValidateError(errors);
     }
 
-    const user = await User.findOne({ username }).populate("like_posts");
+    const user = await User.findOne({ username });
 
     if (!user) {
       errors.general = "User not found";
@@ -57,6 +50,8 @@ export const postLogin = async (
     res.json({
       success: true,
       data: {
+        id: user.id,
+        username: user.username,
         token
       }
     });
@@ -96,13 +91,13 @@ export const postRegister = async (
       });
     }
 
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser: IUserDocument = new User({
       username,
       email,
-      password
-      // createdAt: new Date().toISOString
+      password: hashedPassword,
+      createdAt: new Date().toISOString()
     });
 
     const resUser: IUserDocument = await newUser.save();
@@ -112,6 +107,8 @@ export const postRegister = async (
     res.json({
       success: true,
       data: {
+        id: resUser.id,
+        username: resUser.username,
         token
       }
     });

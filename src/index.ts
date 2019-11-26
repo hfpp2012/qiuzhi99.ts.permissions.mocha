@@ -11,7 +11,6 @@ import checkAuthMiddleware from "./middlewares/check-auth.middleware";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-// import bodyParser from "body-parser";
 
 const app: Express = express();
 
@@ -19,7 +18,6 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
 
-// app.use(bodyParser.json());
 app.use(express.json());
 
 app.get("/", (_req: Request, res: Response) => {
@@ -30,9 +28,6 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.post("/users/register", userController.postRegister);
 app.post("/users/login", userController.postLogin);
-
-// app.get("/posts", postController.getPosts);
-// app.post("/posts", checkAuthMiddleware, postController.createPost);
 
 app
   .route("/posts")
@@ -69,7 +64,6 @@ app.use(errorMiddleware);
 const port: any = process.env.PORT || 6060;
 
 const main = async () => {
-  mongoose.set("useCreateIndex", true);
   mongoose.set("useFindAndModify", false);
   await mongoose.connect("mongodb://localhost:27017/tsexpress", {
     useNewUrlParser: true,

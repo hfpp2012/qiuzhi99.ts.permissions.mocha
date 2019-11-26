@@ -14,6 +14,7 @@ export const getPosts = async (
 ): Promise<void> => {
   try {
     const { page } = req.query;
+
     const myCustomLabels = {
       totalDocs: "total_count",
       docs: "posts",
@@ -28,7 +29,7 @@ export const getPosts = async (
 
     const options = {
       page: page,
-      limit: 2,
+      limit: 20,
       customLabels: myCustomLabels
     };
 
@@ -51,7 +52,7 @@ export const getPost = async (
   try {
     const { id } = req.params;
 
-    const post = await Post.findById(id).populate("user", "-password");
+    const post = await Post.findById(id);
 
     if (post) {
       res.json({
@@ -84,8 +85,6 @@ export const updatePost = async (
 
     if (post) {
       if (post.username === user.username) {
-        // const resPost = await post.update({ body });
-
         const resPost = await Post.findByIdAndUpdate(
           id,
           { body },
@@ -183,22 +182,11 @@ export const likePost = async (
     if (post) {
       if (post.likes.find(like => like.username === user.username)) {
         post.likes = post.likes.filter(like => like.username !== user.username);
-
-        // user.like_posts = user.like_posts.filter(
-        //   post => post.username !== user.username
-        // );
-
-        user.like_posts = user.like_posts.filter(
-          id => !user.like_posts.includes(id)
-        );
       } else {
         post.likes.push({
           username: user.username,
           createdAt: new Date().toISOString()
         });
-
-        // user.like_posts.push(post);
-        user.like_posts.push(post.id);
       }
 
       await post.save();
