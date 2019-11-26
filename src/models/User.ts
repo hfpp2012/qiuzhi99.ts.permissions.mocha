@@ -19,7 +19,7 @@ const userSchema: Schema = new Schema({
 });
 
 userSchema.methods.generateToken = function(): string {
-  const payload: JwtPayload = { id: this.id };
+  const payload: JwtPayload = { id: this.id, username: this.username };
   return jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
     expiresIn: "1h"
   });
