@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import {
   validateRegisterInput,
   validateLoginInput,
@@ -8,6 +8,7 @@ import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 import User, { IUserDocument } from "../models/User";
 import bcrypt from "bcryptjs";
+import { wrapAsync } from "../helpers/wrap-async";
 
 const throwLoginValidateError = (errors: LoginInputError) => {
   throw new HttpException(
@@ -17,12 +18,8 @@ const throwLoginValidateError = (errors: LoginInputError) => {
   );
 };
 
-export const postLogin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const postLogin = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
 
     const { errors, valid } = validateLoginInput(username, password);
@@ -55,17 +52,11 @@ export const postLogin = async (
         token
       }
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const postRegister = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const postRegister = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { username, password, confirmPassword, email } = req.body;
 
     const { errors, valid } = validateRegisterInput(
@@ -112,7 +103,5 @@ export const postRegister = async (
         token
       }
     });
-  } catch (error) {
-    next(error);
   }
-};
+);

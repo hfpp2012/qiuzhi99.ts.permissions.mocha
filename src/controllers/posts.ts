@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import Post from "../models/Post";
 import { IUserDocument } from "../models/User";
 import {
@@ -6,13 +6,10 @@ import {
   throwActionNotAllowedError
 } from "../utils/throwError";
 import { checkBody } from "../utils/validator";
+import { wrapAsync } from "../helpers/wrap-async";
 
-export const getPosts = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getPosts = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { page } = req.query;
 
     const myCustomLabels = {
@@ -40,17 +37,11 @@ export const getPosts = async (
       success: true,
       data: posts
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const getPost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getPost = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const post = await Post.findById(id);
@@ -63,17 +54,11 @@ export const getPost = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const updatePost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const updatePost = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const post = await Post.findById(id);
@@ -102,17 +87,11 @@ export const updatePost = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const deletePost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const deletePost = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const post = await Post.findById(id);
@@ -133,17 +112,11 @@ export const deletePost = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const createPost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createPost = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const user = req.currentUser as IUserDocument;
 
     const { body } = req.body;
@@ -163,17 +136,11 @@ export const createPost = async (
       success: true,
       data: { message: "created successfully", post }
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const likePost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const likePost = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const post = await Post.findById(id);
@@ -199,7 +166,5 @@ export const likePost = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);

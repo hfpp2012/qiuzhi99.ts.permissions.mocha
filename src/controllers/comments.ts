@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { IUserDocument } from "../models/User";
 import { checkBody } from "../utils/validator";
 import Post from "../models/Post";
@@ -7,13 +7,10 @@ import {
   throwCommentNotFoundError,
   throwActionNotAllowedError
 } from "../utils/throwError";
+import { wrapAsync } from "../helpers/wrap-async";
 
-export const createComment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createComment = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const user = req.currentUser as IUserDocument;
 
     const { id } = req.params;
@@ -39,17 +36,11 @@ export const createComment = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const deleteComment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const deleteComment = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { username } = req.currentUser as IUserDocument;
 
     const { id, commentId } = req.params;
@@ -80,7 +71,5 @@ export const deleteComment = async (
     } else {
       throwPostNotFoundError();
     }
-  } catch (error) {
-    next(error);
   }
-};
+);
