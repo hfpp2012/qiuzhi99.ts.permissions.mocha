@@ -191,8 +191,6 @@ export const likePost = async (
 
       await post.save();
 
-      await user.save();
-
       res.json({
         success: true,
         data: { post }

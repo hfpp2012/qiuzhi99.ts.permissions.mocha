@@ -40,7 +40,7 @@ export const validateRegisterInput = (
     errors.username = "Username must not be empty";
   }
 
-  if (isLength(username.trim(), { min: 6 })) {
+  if (!isLength(username.trim(), { min: 6 })) {
     errors.username = "Username must be at least 6 characters long";
   }
 

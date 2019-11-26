@@ -3,14 +3,12 @@ import mongoose from "mongoose";
 import { NOT_FOUND } from "http-status-codes";
 import HttpException from "./exceptions/HttpException";
 import errorMiddleware from "./middlewares/error.middleware";
-import * as userController from "./controllers/user";
-import * as postController from "./controllers/post";
-import * as commentsController from "./controllers/comments";
 import "dotenv/config";
-import checkAuthMiddleware from "./middlewares/check-auth.middleware";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import users from "./routes/users";
+import posts from "./routes/posts";
 
 const app: Express = express();
 
@@ -26,33 +24,8 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-app.post("/users/register", userController.postRegister);
-app.post("/users/login", userController.postLogin);
-
-app
-  .route("/posts")
-  .get(postController.getPosts)
-  .post(checkAuthMiddleware, postController.createPost);
-
-app
-  .route("/posts/:id")
-  .get(postController.getPost)
-  .put(checkAuthMiddleware, postController.updatePost)
-  .delete(checkAuthMiddleware, postController.deletePost);
-
-app.post("/posts/:id/like", checkAuthMiddleware, postController.likePost);
-
-app.post(
-  "/posts/:id/comments",
-  checkAuthMiddleware,
-  commentsController.createComment
-);
-
-app.delete(
-  "/posts/:id/comments/:commentId",
-  checkAuthMiddleware,
-  commentsController.deleteComment
-);
+app.use("/users", users);
+app.use("/posts", posts);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");
