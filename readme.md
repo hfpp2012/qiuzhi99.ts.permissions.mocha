@@ -9,6 +9,7 @@ https://www.qiuzhi99.com/playlists/ts-restful-api.html
 ```
 git clone ssh://git@gitlab.rails365.net:10022/hfpp2012/qiuzhi99.ts.auth.git
 cd qiuzhi99.ts.auth
+cp .env.example .env
 yarn install
 yarn dev
 ```
