@@ -30,7 +30,8 @@ export const getPosts = async (
     const options = {
       page: page,
       limit: 20,
-      customLabels: myCustomLabels
+      customLabels: myCustomLabels,
+      sort: { createdAt: -1 }
     };
 
     const posts = await Post.paginate({}, options);
