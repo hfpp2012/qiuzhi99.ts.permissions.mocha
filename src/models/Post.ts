@@ -1,55 +1,55 @@
 import { Schema, model, Document, PaginateModel } from "mongoose";
 import { IUserDocument } from "./User";
 import mongoosePaginate from "mongoose-paginate-v2";
+// @ts-ignore
+import mongooseAutopopulate from "mongoose-autopopulate";
+import { ICommentDocument } from "./Comment";
 
-interface Like {
-  username: IPostDocument["username"];
-  createdAt: IPostDocument["createdAt"];
-}
+type Like = IUserDocument["_id"];
 
-interface Comment {
-  username: IPostDocument["username"];
-  createdAt: IPostDocument["createdAt"];
-  body: IPostDocument["body"];
-  id?: IPostDocument["_id"];
-}
+type Comment = ICommentDocument["_id"];
 
 interface IPostModel extends PaginateModel<IPostDocument> {}
 
 export interface IPostDocument extends Document {
   body: string;
-  createdAt: string;
-  username: IUserDocument["username"];
   user: IUserDocument["_id"];
   likes: Like[];
   comments: Comment[];
 }
 
-export const postSchema: Schema = new Schema({
-  body: String,
-  createdAt: String,
-  username: String,
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true
+export const postSchema: Schema = new Schema(
+  {
+    body: String,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      autopopulate: { select: "-password" }
+    },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        autopopulate: { select: "-password" }
+      }
+    ],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+        autopopulate: {
+          path: "comments",
+          populate: { path: "user", select: "-password" }
+        }
+      }
+    ]
   },
-  likes: [
-    {
-      username: String,
-      createdAt: String
-    }
-  ],
-  comments: [
-    {
-      username: String,
-      body: String,
-      createdAt: String
-    }
-  ]
-});
+  { timestamps: true }
+);
 
 postSchema.plugin(mongoosePaginate);
+postSchema.plugin(mongooseAutopopulate);
 
 const Post: IPostModel = model<IPostDocument, IPostModel>("Post", postSchema);
 

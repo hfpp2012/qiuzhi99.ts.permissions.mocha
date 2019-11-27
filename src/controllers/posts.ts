@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Post from "../models/Post";
 import { IUserDocument } from "../models/User";
+import Post from "../models/Post";
 import {
   throwPostNotFoundError,
   throwActionNotAllowedError
@@ -70,7 +70,7 @@ export const updatePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.username === user.username) {
+      if (post.user.toString() === user._id.toString()) {
         const resPost = await Post.findByIdAndUpdate(
           id,
           { body },
@@ -99,7 +99,7 @@ export const deletePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.username === user.username) {
+      if (post.user.toString() === user._id.toString()) {
         await Post.findByIdAndDelete(id);
 
         res.json({
@@ -125,9 +125,7 @@ export const createPost = wrapAsync(
 
     const newPost = new Post({
       body,
-      createdAt: new Date().toISOString(),
-      username: user.username,
-      user: user.id
+      user: user._id
     });
 
     const post = await newPost.save();
@@ -148,14 +146,17 @@ export const likePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.likes.find(like => like.username === user.username)) {
-        post.likes = post.likes.filter(like => like.username !== user.username);
+      if (
+        post.likes.find(like => like._id.toString() === user._id.toString())
+      ) {
+        post.likes = post.likes.filter(
+          like => like._id.toString() !== user._id.toString()
+        );
       } else {
-        post.likes.push({
-          username: user.username,
-          createdAt: new Date().toISOString()
-        });
+        post.likes.push(user._id);
       }
+
+      post.populate("likes", "-password").execPopulate();
 
       await post.save();
 

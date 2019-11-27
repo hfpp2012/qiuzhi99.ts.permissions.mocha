@@ -87,8 +87,7 @@ export const postRegister = wrapAsync(
     const newUser: IUserDocument = new User({
       username,
       email,
-      password: hashedPassword,
-      createdAt: new Date().toISOString()
+      password: hashedPassword
     });
 
     const resUser: IUserDocument = await newUser.save();

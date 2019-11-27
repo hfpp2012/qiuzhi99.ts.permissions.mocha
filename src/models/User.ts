@@ -6,17 +6,18 @@ export interface IUserDocument extends Document {
   username: string;
   email: string;
   password: string;
-  createdAt: string;
   _doc: IUserDocument;
   generateToken: () => string;
 }
 
-const userSchema: Schema = new Schema({
-  username: String,
-  email: String,
-  password: String,
-  createdAt: String
-});
+const userSchema: Schema = new Schema(
+  {
+    username: String,
+    email: String,
+    password: String
+  },
+  { timestamps: true }
+);
 
 userSchema.methods.generateToken = function(): string {
   const payload: JwtPayload = { id: this.id, username: this.username };
