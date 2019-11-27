@@ -38,7 +38,7 @@ const port: any = process.env.PORT || 6060;
 
 const main = async () => {
   mongoose.set("useFindAndModify", false);
-  await mongoose.connect("mongodb://localhost:27017/tsexpress", {
+  await mongoose.connect(process.env.MONGODB_URL!, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });

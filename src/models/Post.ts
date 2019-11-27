@@ -1,6 +1,6 @@
-import { Schema, model, Document, PaginateModel } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import { IUserDocument } from "./User";
-import mongoosePaginate from "mongoose-paginate-v2";
+import mongoosePaginate from "mongoose-paginate";
 // @ts-ignore
 import mongooseAutopopulate from "mongoose-autopopulate";
 import { ICommentDocument } from "./Comment";
@@ -8,8 +8,6 @@ import { ICommentDocument } from "./Comment";
 type Like = IUserDocument["_id"];
 
 type Comment = ICommentDocument["_id"];
-
-interface IPostModel extends PaginateModel<IPostDocument> {}
 
 export interface IPostDocument extends Document {
   body: string;
@@ -51,6 +49,6 @@ export const postSchema: Schema = new Schema(
 postSchema.plugin(mongoosePaginate);
 postSchema.plugin(mongooseAutopopulate);
 
-const Post: IPostModel = model<IPostDocument, IPostModel>("Post", postSchema);
+const Post = model<IPostDocument>("Post", postSchema);
 
 export default Post;

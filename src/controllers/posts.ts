@@ -12,22 +12,9 @@ export const getPosts = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { page } = req.query;
 
-    const myCustomLabels = {
-      totalDocs: "total_count",
-      docs: "posts",
-      limit: "limit_value",
-      page: "current_page",
-      nextPage: "next",
-      prevPage: "prev",
-      totalPages: "num_pages",
-      pagingCounter: "slNo",
-      meta: "page"
-    };
-
     const options = {
-      page: page,
+      page: page || 1,
       limit: 20,
-      customLabels: myCustomLabels,
       sort: { createdAt: -1 }
     };
 
@@ -70,7 +57,7 @@ export const updatePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.user.toString() === user._id.toString()) {
+      if (post.user._id.toString() === user._id.toString()) {
         const resPost = await Post.findByIdAndUpdate(
           id,
           { body },
@@ -99,7 +86,7 @@ export const deletePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.user.toString() === user._id.toString()) {
+      if (post.user._id.toString() === user._id.toString()) {
         await Post.findByIdAndDelete(id);
 
         res.json({
