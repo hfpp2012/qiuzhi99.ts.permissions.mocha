@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IUserDocument } from "../models/User";
 import Post from "../models/Post";
+import Comment from "../models/Comment";
 import {
   throwPostNotFoundError,
   throwActionNotAllowedError
@@ -116,6 +117,8 @@ export const deletePost = wrapAsync(
     if (post) {
       if (post.user.equals(user)) {
         await Post.findByIdAndDelete(id);
+
+        await Comment.deleteMany({ post: post._id });
 
         res.json({
           success: true,
