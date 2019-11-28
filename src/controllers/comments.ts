@@ -53,22 +53,26 @@ export const deleteComment = wrapAsync(
 
     const { id, commentId } = req.params;
 
+    const comment = await Comment.findById(commentId);
+
     const post = await Post.findById(id);
 
-    if (post) {
-      const commentIndex = post.comments.findIndex(
-        c => c._id.toString() === commentId.toString()
-      );
+    if (!comment) {
+      throwCommentNotFoundError();
+    }
 
-      const comment = post.comments[commentIndex];
+    if (!post) {
+      throwPostNotFoundError();
+    }
 
-      if (!comment) {
-        throwCommentNotFoundError();
-      }
+    if (post && comment) {
+      if (
+        comment.user.equals(user) &&
+        post.comments.find(c => c.equals(comment))
+      ) {
+        post.comments.filter(c => !c.equals(comment));
 
-      if (comment.user._id.toString() === user._id.toString()) {
-        post.comments.splice(commentIndex, 1);
-
+        await Comment.findByIdAndDelete(commentId);
         await post.save();
 
         res.json({
@@ -78,8 +82,6 @@ export const deleteComment = wrapAsync(
       } else {
         throwActionNotAllowedError();
       }
-    } else {
-      throwPostNotFoundError();
     }
   }
 );

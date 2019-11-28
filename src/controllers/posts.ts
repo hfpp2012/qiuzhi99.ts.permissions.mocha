@@ -57,7 +57,7 @@ export const updatePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.user._id.toString() === user._id.toString()) {
+      if (post.user.equals(user)) {
         const resPost = await Post.findByIdAndUpdate(
           id,
           { body },
@@ -86,7 +86,7 @@ export const deletePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (post.user._id.toString() === user._id.toString()) {
+      if (post.user.equals(user)) {
         await Post.findByIdAndDelete(id);
 
         res.json({
@@ -133,17 +133,13 @@ export const likePost = wrapAsync(
     const user = req.currentUser as IUserDocument;
 
     if (post) {
-      if (
-        post.likes.find(like => like._id.toString() === user._id.toString())
-      ) {
-        post.likes = post.likes.filter(
-          like => like._id.toString() !== user._id.toString()
-        );
+      if (post.likes.find(like => like.equals(user))) {
+        post.likes = post.likes.filter(like => !like.equals(user));
       } else {
         post.likes.push(user._id);
       }
 
-      post.populate("likes", "-password").execPopulate();
+      post.populate("likes").execPopulate();
 
       await post.save();
 
