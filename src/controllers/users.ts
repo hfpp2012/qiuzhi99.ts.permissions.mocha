@@ -22,7 +22,7 @@ const throwLoginValidateError = (errors: LoginInputError) => {
  * Login User
  *
  * @Method POST
- * @URL /login
+ * @URL /api/users/login
  *
  */
 export const postLogin = wrapAsync(
@@ -66,7 +66,7 @@ export const postLogin = wrapAsync(
  * Register User
  *
  * @Method POST
- * @URL /register
+ * @URL /api/users/register
  *
  */
 export const postRegister = wrapAsync(

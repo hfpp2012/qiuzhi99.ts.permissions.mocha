@@ -14,7 +14,7 @@ import { wrapAsync } from "../helpers/wrap-async";
  * create comment
  *
  * @Method POST
- * @URL /posts/:id/comments
+ * @URL /api/posts/:id/comments
  *
  */
 export const createComment = wrapAsync(
@@ -58,7 +58,7 @@ export const createComment = wrapAsync(
  * delete comment
  *
  * @Method DELETE
- * @URL /comments/:id
+ * @URL /api/comments/:id
  *
  */
 export const deleteComment = wrapAsync(

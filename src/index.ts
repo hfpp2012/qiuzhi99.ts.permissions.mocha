@@ -7,8 +7,7 @@ import "dotenv/config";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
-import users from "./routes/users";
-import posts from "./routes/posts";
+import routes from "./routes";
 
 const app: Express = express();
 
@@ -24,8 +23,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-app.use("/users", users);
-app.use("/posts", posts);
+app.use("/api", routes);
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
   const error: HttpException = new HttpException(NOT_FOUND, "Router Not Found");

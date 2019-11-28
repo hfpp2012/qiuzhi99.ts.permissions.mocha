@@ -13,7 +13,7 @@ import { wrapAsync } from "../helpers/wrap-async";
  * show posts list
  *
  * @Method GET
- * @URL /posts
+ * @URL /api/posts
  *
  */
 export const getPosts = wrapAsync(
@@ -39,7 +39,7 @@ export const getPosts = wrapAsync(
  * show single post
  *
  * @Method GET
- * @URL /posts/:id
+ * @URL /api/posts/:id
  *
  */
 export const getPost = wrapAsync(
@@ -63,7 +63,7 @@ export const getPost = wrapAsync(
  * update single post
  *
  * @Method PUT
- * @URL /posts/:id
+ * @URL /api/posts/:id
  *
  */
 export const updatePost = wrapAsync(
@@ -103,7 +103,7 @@ export const updatePost = wrapAsync(
  * delete a post
  *
  * @Method DELETE
- * @URL /posts/:id
+ * @URL /api/posts/:id
  *
  */
 export const deletePost = wrapAsync(
@@ -137,7 +137,7 @@ export const deletePost = wrapAsync(
  * create post
  *
  * @Method POST
- * @URL /posts
+ * @URL /api/posts
  *
  */
 export const createPost = wrapAsync(
@@ -166,7 +166,7 @@ export const createPost = wrapAsync(
  * login user like post
  *
  * @Method POST
- * @URL /posts/:id/like
+ * @URL /api/posts/:id/like
  *
  */
 export const likePost = wrapAsync(

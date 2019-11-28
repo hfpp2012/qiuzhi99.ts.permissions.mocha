@@ -3,7 +3,7 @@ import * as postsController from "../controllers/posts";
 import * as commentsController from "../controllers/comments";
 import checkAuthMiddleware from "../middlewares/check-auth.middleware";
 
-let router: Router = express.Router();
+const router: Router = express.Router();
 
 router
   .route("/")
