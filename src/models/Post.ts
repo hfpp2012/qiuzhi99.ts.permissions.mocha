@@ -23,13 +23,13 @@ export const postSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      autopopulate: { select: "-password" }
+      autopopulate: true
     },
     likes: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
-        autopopulate: { select: "-password" }
+        autopopulate: true
       }
     ],
     comments: [
@@ -37,8 +37,7 @@ export const postSchema: Schema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Comment",
         autopopulate: {
-          path: "comments",
-          populate: { path: "user", select: "-password" }
+          path: "comments"
         }
       }
     ]

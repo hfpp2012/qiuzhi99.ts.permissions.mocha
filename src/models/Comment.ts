@@ -17,7 +17,7 @@ const commentSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      autopopulate: { select: "-password" }
+      autopopulate: true
     },
     post: {
       type: Schema.Types.ObjectId,

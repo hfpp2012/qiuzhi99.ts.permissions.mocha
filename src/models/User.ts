@@ -26,6 +26,13 @@ userSchema.methods.generateToken = function(): string {
   });
 };
 
+userSchema.set("toJSON", {
+  transform: function(_doc, ret) {
+    delete ret["password"];
+    return ret;
+  }
+});
+
 const User: Model<IUserDocument> = model<IUserDocument>("User", userSchema);
 
 export default User;
