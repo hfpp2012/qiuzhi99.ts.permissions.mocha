@@ -10,6 +10,13 @@ import {
 } from "../utils/throwError";
 import { wrapAsync } from "../helpers/wrap-async";
 
+/**
+ * create comment
+ *
+ * @Method POST
+ * @URL /posts/:id/comments
+ *
+ */
 export const createComment = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const user = req.currentUser as IUserDocument;
@@ -47,6 +54,13 @@ export const createComment = wrapAsync(
   }
 );
 
+/**
+ * delete comment
+ *
+ * @Method DELETE
+ * @URL /comments/:id
+ *
+ */
 export const deleteComment = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const user = req.currentUser as IUserDocument;

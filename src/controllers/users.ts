@@ -18,6 +18,13 @@ const throwLoginValidateError = (errors: LoginInputError) => {
   );
 };
 
+/**
+ * Login User
+ *
+ * @Method POST
+ * @URL /login
+ *
+ */
 export const postLogin = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
@@ -55,6 +62,13 @@ export const postLogin = wrapAsync(
   }
 );
 
+/**
+ * Register User
+ *
+ * @Method POST
+ * @URL /register
+ *
+ */
 export const postRegister = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { username, password, confirmPassword, email } = req.body;

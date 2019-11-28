@@ -8,6 +8,13 @@ import {
 import { checkBody } from "../utils/validator";
 import { wrapAsync } from "../helpers/wrap-async";
 
+/**
+ * show posts list
+ *
+ * @Method GET
+ * @URL /posts
+ *
+ */
 export const getPosts = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { page } = req.query;
@@ -27,6 +34,13 @@ export const getPosts = wrapAsync(
   }
 );
 
+/**
+ * show single post
+ *
+ * @Method GET
+ * @URL /posts/:id
+ *
+ */
 export const getPost = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -44,6 +58,13 @@ export const getPost = wrapAsync(
   }
 );
 
+/**
+ * update single post
+ *
+ * @Method PUT
+ * @URL /posts/:id
+ *
+ */
 export const updatePost = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -77,6 +98,13 @@ export const updatePost = wrapAsync(
   }
 );
 
+/**
+ * delete a post
+ *
+ * @Method DELETE
+ * @URL /posts/:id
+ *
+ */
 export const deletePost = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -102,6 +130,13 @@ export const deletePost = wrapAsync(
   }
 );
 
+/**
+ * create post
+ *
+ * @Method POST
+ * @URL /posts
+ *
+ */
 export const createPost = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const user = req.currentUser as IUserDocument;
@@ -124,6 +159,13 @@ export const createPost = wrapAsync(
   }
 );
 
+/**
+ * login user like post
+ *
+ * @Method POST
+ * @URL /posts/:id/like
+ *
+ */
 export const likePost = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
