@@ -5,10 +5,11 @@ import User from "../models/User";
 import Post from "../models/Post";
 import Comment from "../models/Comment";
 import bcrypt from "bcryptjs";
+import config from "../config/config";
 
 const main = async () => {
   mongoose.set("useFindAndModify", false);
-  await mongoose.connect(process.env.MONGODB_URL!, {
+  await mongoose.connect(config.db.hostUrl!, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });

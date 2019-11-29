@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import * as postsController from "../controllers/posts";
 import * as commentsController from "../controllers/comments";
+
 import checkAuthMiddleware from "../middlewares/check-auth.middleware";
 
 const router: Router = express.Router();

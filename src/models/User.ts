@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Schema, model, Model, Document } from "mongoose";
 import { JwtPayload } from "../types/Jwt";
+import config from "../config/config";
 
 export interface IUserDocument extends Document {
   username: string;
@@ -21,7 +22,7 @@ const userSchema: Schema = new Schema(
 
 userSchema.methods.generateToken = function(): string {
   const payload: JwtPayload = { id: this.id, username: this.username };
-  return jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
+  return jwt.sign(payload, config.auth.secretKey, {
     expiresIn: "1d"
   });
 };

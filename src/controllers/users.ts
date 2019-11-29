@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import {
   validateRegisterInput,
   validateLoginInput,
@@ -6,7 +7,9 @@ import {
 } from "../utils/validator";
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
+
 import User, { IUserDocument } from "../models/User";
+
 import bcrypt from "bcryptjs";
 import { wrapAsync } from "../helpers/wrap-async";
 

@@ -1,6 +1,7 @@
 import { Schema, model, Document } from "mongoose";
-import { IUserDocument } from "./User";
 import mongoosePaginate from "mongoose-paginate";
+
+import { IUserDocument } from "./User";
 import { ICommentDocument } from "./Comment";
 
 type Like = IUserDocument["_id"];

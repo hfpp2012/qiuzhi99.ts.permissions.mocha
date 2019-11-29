@@ -1,9 +1,14 @@
 import { Response, NextFunction, Request } from "express";
+
 import { UNAUTHORIZED } from "http-status-codes";
 import HttpException from "../exceptions/HttpException";
+
 import jwt from "jsonwebtoken";
-import User from "../models/User";
 import { JwtPayload } from "../types/Jwt";
+
+import User from "../models/User";
+
+import config from "../config/config";
 
 const checkAuthMiddleware = async (
   req: Request,
@@ -17,10 +22,7 @@ const checkAuthMiddleware = async (
 
     if (token) {
       try {
-        const jwtData = jwt.verify(
-          token,
-          process.env.JWT_SECRET_KEY!
-        ) as JwtPayload;
+        const jwtData = jwt.verify(token, config.auth.secretKey) as JwtPayload;
 
         const user = await User.findById(jwtData.id);
 

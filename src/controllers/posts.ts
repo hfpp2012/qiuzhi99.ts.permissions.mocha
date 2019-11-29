@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
+
 import { IUserDocument } from "../models/User";
 import Post from "../models/Post";
 import Comment from "../models/Comment";
+
 import {
   throwPostNotFoundError,
   throwActionNotAllowedError
 } from "../utils/throwError";
 import { checkBody } from "../utils/validator";
+
 import { wrapAsync } from "../helpers/wrap-async";
 
 /**

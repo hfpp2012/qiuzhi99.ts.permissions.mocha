@@ -1,5 +1,6 @@
 import { isEmpty, equals, isEmail, isLength } from "validator";
 import { IUserDocument } from "../models/User";
+
 import HttpException from "../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 

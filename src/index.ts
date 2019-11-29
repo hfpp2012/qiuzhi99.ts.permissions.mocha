@@ -1,9 +1,18 @@
 import express, { Express, Request, Response, NextFunction } from "express";
+
+// database
 import mongoose from "mongoose";
+
+// error handler
 import { NOT_FOUND } from "http-status-codes";
 import HttpException from "./exceptions/HttpException";
 import errorMiddleware from "./middlewares/error.middleware";
+
+// config
 import "dotenv/config";
+import config from "./config/config";
+
+// middleware
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
@@ -16,7 +25,7 @@ app.use(helmet());
 app.use(cors());
 app.use(
   morgan("dev", {
-    skip: () => process.env.NODE_ENV === "test"
+    skip: () => config.environment === "test"
   })
 );
 
@@ -38,11 +47,11 @@ app.use((_req: Request, _res: Response, next: NextFunction) => {
 
 app.use(errorMiddleware);
 
-const port: any = process.env.PORT || 6060;
+const port: any = config.port;
 
 const main = async () => {
   mongoose.set("useFindAndModify", false);
-  await mongoose.connect(process.env.MONGODB_URL!, {
+  await mongoose.connect(config.db.hostUrl!, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
