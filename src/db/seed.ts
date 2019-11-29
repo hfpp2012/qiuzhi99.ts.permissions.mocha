@@ -8,51 +8,58 @@ import bcrypt from "bcryptjs";
 import config from "../config/config";
 
 const main = async () => {
-  mongoose.set("useFindAndModify", false);
-  await mongoose.connect(config.db.hostUrl!, {
+  const mongodbUrl = `${config.db.host}:${config.db.port}/${config.db.database}`;
+  await mongoose.connect(mongodbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
-
   console.log("connected");
+  console.log("---------");
 
-  for (let i = 0; i < 10; i++) {
-    const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
-
-    const newUser = new User({
-      username: faker.name.findName(),
-      email: faker.internet.email(),
-      password: hashedPassword
-    });
-
-    const user = await newUser.save();
-
+  const hashedPassword = await bcrypt.hash("12345678", 10);
+  const users = await User.find();
+  if (users.length === 0) {
     for (let i = 0; i < 10; i++) {
-      const newPost = new Post({
-        user: user._id,
-        body: faker.lorem.paragraphs()
+      const newUser = new User({
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        password: hashedPassword
       });
+      const user = await newUser.save();
+      console.log("create user - ", user.username, " with password '12345678'");
 
-      const post = await newPost.save();
-
-      for (let i = 0; i < 2; i++) {
-        const newComment = new Comment({
+      for (let i = 0; i < 10; i++) {
+        const newPost = new Post({
           user: user._id,
-          body: faker.lorem.paragraphs(),
-          post: post._id
+          body: faker.lorem.paragraphs()
         });
+        const post = await newPost.save();
+        console.log("create post for user ", user.username, ` ${post._id}`);
 
-        const comment = await newComment.save();
+        for (let i = 0; i < 5; i++) {
+          const newComment = new Comment({
+            user: user._id,
+            body: faker.lorem.paragraphs(),
+            post: post._id
+          });
+          const comment = await newComment.save();
+          console.log(
+            "create comment for user ",
+            user.username,
+            ` ${comment._id}`
+          );
 
-        post.comments.unshift(comment._id);
+          post.comments.unshift(comment._id);
+          await post.save();
+        }
 
-        await post.save();
+        console.log();
       }
+      console.log("---------");
     }
   }
 
   await mongoose.connection.close();
-
   console.log("disconnected");
 };
 

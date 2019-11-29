@@ -23,7 +23,7 @@ const userSchema: Schema = new Schema(
 userSchema.methods.generateToken = function(): string {
   const payload: JwtPayload = { id: this.id, username: this.username };
   return jwt.sign(payload, config.auth.secretKey, {
-    expiresIn: "1d"
+    expiresIn: "5d"
   });
 };
 

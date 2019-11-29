@@ -25,12 +25,16 @@ export default {
       : process.env.MONGODB_DATABASE
   },
   superAdmin: {
-    username: process.env.ADMIN_USERNAME || "qiuzhi99",
-    password: process.env.ADMIN_PASSWORD || "12345678"
+    username: process.env.SUPER_ADMIN_USERNAME || "qiuzhi99",
+    password: process.env.SUPER_ADMIN_PASSWORD || "12345678"
   },
   basicAdmin: {
-    username: process.env.ADMIN_USERNAME || "hfpp2012",
-    password: process.env.ADMIN_PASSWORD || "12345678"
+    username: process.env.BASIC_ADMIN_USERNAME || "hfpp2012",
+    password: process.env.BASIC_ADMIN_PASSWORD || "12345678"
+  },
+  user: {
+    username: process.env.USERNAME || "hfpp2012",
+    password: process.env.PASSWORD || "12345678"
   },
   logging: {
     dir: process.env.LOGGING_DIR || "logs",
