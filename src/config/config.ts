@@ -34,7 +34,8 @@ export default {
   },
   user: {
     username: process.env.USERNAME || "hfpp2012",
-    password: process.env.PASSWORD || "12345678"
+    password: process.env.PASSWORD || "12345678",
+    email: process.env.EMAIL || "hfpp2012@gmail.com"
   },
   logging: {
     dir: process.env.LOGGING_DIR || "logs",

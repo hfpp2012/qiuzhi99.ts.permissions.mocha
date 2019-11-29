@@ -21,6 +21,11 @@ import routes from "./routes";
 import { Logger, ILogger } from "./utils/logger";
 import notFoundError from "./middlewares/notFoundHandler.middleware";
 
+// model
+import User from "./models/User";
+
+import bcrypt from "bcryptjs";
+
 export class Application {
   app: Express;
   config = config;
@@ -57,6 +62,7 @@ export class Application {
   setupDbAndServer = async () => {
     await this.setupDb();
     await this.startServer();
+    await this.createUser();
   };
 
   setupDb = async () => {
@@ -80,5 +86,24 @@ export class Application {
         })
         .on("error", nodeErrorHandler);
     });
+  };
+
+  createUser = async (): Promise<any> => {
+    try {
+      const user = await User.findOne({ username: config.user.username });
+      if (user) return;
+
+      const hashedPassword = await bcrypt.hash(config.user.password, 10);
+
+      let newUser = new User({
+        username: config.user.username,
+        password: hashedPassword,
+        email: config.user.email
+      });
+
+      await newUser.save();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 }
