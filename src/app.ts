@@ -61,11 +61,12 @@ export class Application {
 
   setupDb = async () => {
     mongoose.set("useFindAndModify", false);
-    await mongoose.connect(config.db.hostUrl!, {
+    const mongodbUrl = `${config.db.host}:${config.db.port}/${config.db.database}`;
+    await mongoose.connect(mongodbUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    this.logger.info(`Connected to database. Connection: ${config.db.hostUrl}`);
+    this.logger.info(`Connected to database. Connection: ${mongodbUrl}`);
   };
 
   startServer = (): Promise<boolean> => {

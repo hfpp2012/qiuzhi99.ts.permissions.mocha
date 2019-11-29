@@ -14,9 +14,15 @@ export default {
       process.env.ADMIN_JWT_SECRET_KEY || "4C31F7EFD6857D91E729165510520424"
   },
   db: {
-    hostUrl: isTestEnvironment
+    host: isTestEnvironment
       ? process.env.TEST_MONGODB_URL
-      : process.env.MONGODB_URL
+      : process.env.MONGODB_URL,
+    port: isTestEnvironment
+      ? process.env.TEST_MONGODB_PORT
+      : process.env.MONGODB_PORT,
+    database: isTestEnvironment
+      ? process.env.TEST_MONGODB_DATABASE
+      : process.env.MONGODB_DATABASE
   },
   superAdmin: {
     username: process.env.ADMIN_USERNAME || "qiuzhi99",
