@@ -11,11 +11,17 @@ import routes from "./routes";
 
 const app: Express = express();
 
-app.use(morgan("dev"));
+app.use(require("express-status-monitor")());
 app.use(helmet());
 app.use(cors());
+app.use(
+  morgan("dev", {
+    skip: () => process.env.NODE_ENV === "test"
+  })
+);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (_req: Request, res: Response) => {
   res.json({

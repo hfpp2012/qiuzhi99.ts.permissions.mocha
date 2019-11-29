@@ -1,8 +1,6 @@
 import { Schema, model, Model, Document } from "mongoose";
 import { IPostDocument } from "./Post";
 import { IUserDocument } from "./User";
-// @ts-ignore
-import mongooseAutopopulate from "mongoose-autopopulate";
 
 export interface ICommentDocument extends Document {
   user: IUserDocument["_id"];
@@ -29,7 +27,7 @@ const commentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-commentSchema.plugin(mongooseAutopopulate);
+commentSchema.plugin(require("mongoose-autopopulate"));
 
 const Comment: Model<ICommentDocument> = model<ICommentDocument>(
   "Comment",

@@ -1,8 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 import { IUserDocument } from "./User";
 import mongoosePaginate from "mongoose-paginate";
-// @ts-ignore
-import mongooseAutopopulate from "mongoose-autopopulate";
 import { ICommentDocument } from "./Comment";
 
 type Like = IUserDocument["_id"];
@@ -46,7 +44,7 @@ export const postSchema: Schema = new Schema(
 );
 
 postSchema.plugin(mongoosePaginate);
-postSchema.plugin(mongooseAutopopulate);
+postSchema.plugin(require("mongoose-autopopulate"));
 
 const Post = model<IPostDocument>("Post", postSchema);
 
