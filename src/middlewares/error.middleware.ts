@@ -3,6 +3,14 @@ import { Request, Response, NextFunction } from "express";
 import HttpException from "../exceptions/HttpException";
 import { INTERNAL_SERVER_ERROR } from "http-status-codes";
 
+/**
+ * Generic error response middleware for internal server errors.
+ *
+ * @param  {HttpException} error
+ * @param  {Request} _request
+ * @param  {Response} response
+ * @param  {NextFunction} next
+ */
 const errorMiddleware = (
   error: HttpException,
   _request: Request,

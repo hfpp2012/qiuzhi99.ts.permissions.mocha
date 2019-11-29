@@ -55,14 +55,17 @@ export class Application {
   }
 
   setupDbAndServer = async () => {
+    await this.setupDb();
+    await this.startServer();
+  };
+
+  setupDb = async () => {
     mongoose.set("useFindAndModify", false);
     await mongoose.connect(config.db.hostUrl!, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
     this.logger.info(`Connected to database. Connection: ${config.db.hostUrl}`);
-
-    await this.startServer();
   };
 
   startServer = (): Promise<boolean> => {
@@ -70,7 +73,7 @@ export class Application {
       this.app
         .listen(+this.config.port, this.config.host, () => {
           this.logger.info(
-            `Running on http://${this.config.host}:${this.config.port}`
+            `Server started at http://${this.config.host}:${this.config.port}`
           );
           resolve(true);
         })
