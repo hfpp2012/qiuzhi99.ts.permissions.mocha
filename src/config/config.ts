@@ -4,6 +4,7 @@ const isTestEnvironment = process.env.NODE_ENV === "test";
 
 export default {
   environment: process.env.NODE_ENV || "development",
+  host: process.env.APP_HOST || "127.0.0.1",
   port:
     (isTestEnvironment ? process.env.TEST_APP_PORT : process.env.APP_PORT) ||
     "6060",
