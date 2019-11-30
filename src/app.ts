@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 
 // error handler
 import errorMiddleware from "./middlewares/error.middleware";
-import nodeErrorHandler from "./middlewares/nodeErrorHandler.middleware";
 
 // config
 import "dotenv/config";
@@ -84,7 +83,7 @@ export class Application {
           );
           resolve(true);
         })
-        .on("error", nodeErrorHandler);
+        .on("error", err => console.error(err));
     });
   };
 
