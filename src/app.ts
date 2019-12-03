@@ -24,6 +24,7 @@ import notFoundError from "./middlewares/notFoundHandler.middleware";
 import User from "./models/User";
 
 import bcrypt from "bcryptjs";
+import Admin from "./models/Admin";
 
 export class Application {
   app: Express;
@@ -62,6 +63,7 @@ export class Application {
     await this.setupDb();
     await this.startServer();
     await this.createUser();
+    await this.createAdmin();
   };
 
   setupDb = async () => {
@@ -85,6 +87,40 @@ export class Application {
         })
         .on("error", err => console.error(err));
     });
+  };
+
+  createAdmin = async (): Promise<any> => {
+    try {
+      const adminDatas = [
+        {
+          username: config.superAdmin.username,
+          password: config.superAdmin.password
+        },
+        {
+          username: config.basicAdmin.username,
+          password: config.basicAdmin.password
+        }
+      ];
+
+      const admins = await Admin.find({
+        username: { $in: [adminDatas[0].username, adminDatas[1].username] }
+      });
+
+      if (admins.length > 0) return;
+
+      adminDatas.map(async (data: { username: string; password: string }) => {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        let admin = new Admin({
+          username: data.username,
+          password: hashedPassword
+        });
+
+        await admin.save();
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 
   createUser = async (): Promise<any> => {
