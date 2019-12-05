@@ -8,13 +8,14 @@ import bcrypt from "bcryptjs";
 import Admin from "../../models/Admin";
 
 import { wrapAsync } from "../../helpers/wrap-async";
+import { throwAdminNotFoundError } from "../../utils/throwError";
 
 const throwValidateError = (errors: InputError) => {
   throw new HttpException(UNPROCESSABLE_ENTITY, "Admin input error", errors);
 };
 
 /**
- * Login Admin
+ * Login admin
  *
  * @Method POST
  * @URL /api/admin/users/login
@@ -57,7 +58,7 @@ export const postLogin = wrapAsync(
 );
 
 /**
- * Admin List
+ * Admin list
  *
  * @Method GET
  * @URL /api/admin/users
@@ -77,7 +78,7 @@ export const index = wrapAsync(
 );
 
 /**
- * Add Admin
+ * Add admin
  *
  * @Method POST
  * @URL /api/admin/users
@@ -109,5 +110,48 @@ export const addAdmin = wrapAsync(
         message: "created successfully"
       }
     });
+  }
+);
+
+/**
+ * Update admin
+ *
+ * @Method PUT
+ * @URL /api/admin/users/:id
+ *
+ */
+export const updateAdmin = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { username, password } = req.body;
+
+    const { errors, valid } = validateInput(username, password);
+
+    if (!valid) {
+      return throwValidateError(errors);
+    }
+
+    const { id } = req.params;
+
+    const admin = await Admin.findById(id);
+
+    if (admin) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const resAdmin = await Admin.findByIdAndUpdate(
+        id,
+        { username: username, password: hashedPassword },
+        { new: true }
+      );
+
+      res.json({
+        success: true,
+        data: {
+          admin: resAdmin,
+          message: "updated successfully"
+        }
+      });
+    } else {
+      throwAdminNotFoundError();
+    }
   }
 );

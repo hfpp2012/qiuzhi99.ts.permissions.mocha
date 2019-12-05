@@ -5,16 +5,26 @@ import config from "../config/config";
 // @ts-ignore
 import uniqueValidator from "mongoose-unique-validator";
 
+enum Role {
+  admin = "admin",
+  basic = "basic",
+  coder = "coder"
+}
+
 export interface IAdminDocument extends Document {
   username: string;
   password: string;
+  isAdmin: boolean;
+  role: Role;
   generateToken: () => string;
 }
 
 const adminSchema: Schema = new Schema(
   {
     username: { type: String, unique: true, trim: true },
-    password: String
+    password: String,
+    isAdmin: { type: Boolean, default: false },
+    role: { type: String, default: "basic" }
   },
   { timestamps: true }
 );

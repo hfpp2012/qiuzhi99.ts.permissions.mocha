@@ -9,6 +9,10 @@ export const throwCommentNotFoundError = () => {
   throw new HttpException(NOT_FOUND, "Comment not found");
 };
 
+export const throwAdminNotFoundError = () => {
+  throw new HttpException(NOT_FOUND, "Admin not found");
+};
+
 export const throwActionNotAllowedError = () => {
   throw new HttpException(UNAUTHORIZED, "Action not allowed");
 };

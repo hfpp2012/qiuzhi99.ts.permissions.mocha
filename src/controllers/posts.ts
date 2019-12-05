@@ -13,7 +13,7 @@ import { checkBody } from "../utils/validator";
 import { wrapAsync } from "../helpers/wrap-async";
 
 /**
- * show posts list
+ * Show posts list
  *
  * @Method GET
  * @URL /api/posts
@@ -39,7 +39,7 @@ export const getPosts = wrapAsync(
 );
 
 /**
- * show single post
+ * Show single post
  *
  * @Method GET
  * @URL /api/posts/:id
@@ -63,7 +63,7 @@ export const getPost = wrapAsync(
 );
 
 /**
- * update single post
+ * Update single post
  *
  * @Method PUT
  * @URL /api/posts/:id
@@ -103,7 +103,7 @@ export const updatePost = wrapAsync(
 );
 
 /**
- * delete a post
+ * Delete a post
  *
  * @Method DELETE
  * @URL /api/posts/:id
@@ -137,7 +137,7 @@ export const deletePost = wrapAsync(
 );
 
 /**
- * create post
+ * Create post
  *
  * @Method POST
  * @URL /api/posts
@@ -166,7 +166,7 @@ export const createPost = wrapAsync(
 );
 
 /**
- * login user like post
+ * Login user like post
  *
  * @Method POST
  * @URL /api/posts/:id/like

@@ -94,11 +94,13 @@ export class Application {
       const adminDatas = [
         {
           username: config.superAdmin.username,
-          password: config.superAdmin.password
+          password: config.superAdmin.password,
+          isAdmin: true
         },
         {
           username: config.basicAdmin.username,
-          password: config.basicAdmin.password
+          password: config.basicAdmin.password,
+          isAdmin: false
         }
       ];
 
@@ -108,16 +110,23 @@ export class Application {
 
       if (admins.length > 0) return;
 
-      adminDatas.map(async (data: { username: string; password: string }) => {
-        const hashedPassword = await bcrypt.hash(data.password, 10);
+      adminDatas.map(
+        async (data: {
+          username: string;
+          password: string;
+          isAdmin: boolean;
+        }) => {
+          const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        let admin = new Admin({
-          username: data.username,
-          password: hashedPassword
-        });
+          let admin = new Admin({
+            username: data.username,
+            password: hashedPassword,
+            isAdmin: data.isAdmin
+          });
 
-        await admin.save();
-      });
+          await admin.save();
+        }
+      );
     } catch (error) {
       return Promise.reject(error);
     }
