@@ -5,10 +5,12 @@ import HttpException from "../../exceptions/HttpException";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 
 import bcrypt from "bcryptjs";
+
 import Admin from "../../models/Admin";
 
-import { wrapAsync } from "../../helpers/wrap-async";
 import { throwAdminNotFoundError } from "../../utils/throwError";
+
+import { wrapAsync } from "../../helpers/wrap-async";
 
 const throwValidateError = (errors: InputError) => {
   throw new HttpException(UNPROCESSABLE_ENTITY, "Admin input error", errors);
@@ -152,6 +154,38 @@ export const updateAdmin = wrapAsync(
       });
     } else {
       throwAdminNotFoundError();
+    }
+  }
+);
+
+/**
+ * Add role for admin
+ *
+ * @Method POST
+ * @URL /api/admin/users/:id/role/:roleId
+ *
+ */
+export const role = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id, roleId } = req.params;
+
+    const admin = await Admin.findById(id);
+
+    if (!admin) {
+      throwAdminNotFoundError();
+    }
+
+    if (admin) {
+      admin.role = roleId;
+
+      await admin.save();
+
+      res.json({
+        success: true,
+        data: {
+          admin
+        }
+      });
     }
   }
 );

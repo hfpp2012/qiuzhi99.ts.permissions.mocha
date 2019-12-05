@@ -23,4 +23,6 @@ router
 
 router.put("/:id", usersController.updateAdmin);
 
+router.post("/:id/role/:roleId", usersController.role);
+
 export default router;

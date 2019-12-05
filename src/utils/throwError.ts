@@ -13,6 +13,10 @@ export const throwAdminNotFoundError = () => {
   throw new HttpException(NOT_FOUND, "Admin not found");
 };
 
+export const throwRoleNotFoundError = () => {
+  throw new HttpException(NOT_FOUND, "Role not found");
+};
+
 export const throwActionNotAllowedError = () => {
   throw new HttpException(UNAUTHORIZED, "Action not allowed");
 };
