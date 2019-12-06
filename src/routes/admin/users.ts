@@ -8,12 +8,7 @@ const router: Router = express.Router();
 router.post("/login", usersController.postLogin);
 
 router
-  .get(
-    "/",
-    checkAdminAuthMiddleware,
-    permit("admin", "basic"),
-    usersController.index
-  )
+  .get("/", checkAdminAuthMiddleware, usersController.index)
   .post(
     "/",
     checkAdminAuthMiddleware,
@@ -23,6 +18,6 @@ router
 
 router.put("/:id", usersController.updateAdmin);
 
-router.post("/:id/role/:roleId", usersController.role);
+router.post("/:id/role", usersController.role);
 
 export default router;

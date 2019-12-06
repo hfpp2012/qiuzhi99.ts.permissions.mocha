@@ -162,12 +162,14 @@ export const updateAdmin = wrapAsync(
  * Add role for admin
  *
  * @Method POST
- * @URL /api/admin/users/:id/role/:roleId
+ * @URL /api/admin/users/:id/role
  *
  */
 export const role = wrapAsync(
   async (req: Request, res: Response): Promise<void> => {
-    const { id, roleId } = req.params;
+    const { id } = req.params;
+
+    const { roleId } = req.body;
 
     const admin = await Admin.findById(id);
 
@@ -180,10 +182,12 @@ export const role = wrapAsync(
 
       await admin.save();
 
+      const resAdmin = await Admin.findById(id);
+
       res.json({
         success: true,
         data: {
-          admin
+          admin: resAdmin
         }
       });
     }

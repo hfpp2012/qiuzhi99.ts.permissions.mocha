@@ -8,18 +8,11 @@ import uniqueValidator from "mongoose-unique-validator";
 // @ts-ignore
 import exists from "mongoose-exists";
 
-// enum Role {
-//   admin = "admin",
-//   basic = "basic",
-//   coder = "coder"
-// }
-
 export interface IAdminDocument extends Document {
   username: string;
   password: string;
   isAdmin: boolean;
   role: IRoleDocument["_id"];
-  // role: Role;
   generateToken: () => string;
 }
 
@@ -28,11 +21,11 @@ const adminSchema: Schema = new Schema(
     username: { type: String, unique: true, trim: true },
     password: String,
     isAdmin: { type: Boolean, default: false },
-    // role: { type: String, default: "basic" }
     role: {
       type: Schema.Types.ObjectId,
       ref: "Role",
-      exists: true
+      exists: true,
+      autopopulate: true
     }
   },
   { timestamps: true }
@@ -54,6 +47,7 @@ adminSchema.set("toJSON", {
 
 adminSchema.plugin(uniqueValidator);
 adminSchema.plugin(exists);
+adminSchema.plugin(require("mongoose-autopopulate"));
 
 const Admin: Model<IAdminDocument> = model<IAdminDocument>(
   "Admin",
