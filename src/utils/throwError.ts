@@ -17,6 +17,10 @@ export const throwRoleNotFoundError = () => {
   throw new HttpException(NOT_FOUND, "Role not found");
 };
 
+export const throwPermissionNotFoundError = () => {
+  throw new HttpException(NOT_FOUND, "Permission not found");
+};
+
 export const throwActionNotAllowedError = () => {
   throw new HttpException(UNAUTHORIZED, "Action not allowed");
 };
