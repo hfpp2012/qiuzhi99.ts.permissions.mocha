@@ -193,3 +193,39 @@ export const role = wrapAsync(
     }
   }
 );
+
+/**
+ * Add roles for admin
+ *
+ * @Method POST
+ * @URL /api/admin/users/:id/roles
+ *
+ */
+export const roles = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    const { roleIds } = req.body;
+
+    const admin = await Admin.findById(id);
+
+    if (!admin) {
+      throwAdminNotFoundError();
+    }
+
+    if (admin) {
+      admin.roles = roleIds;
+
+      await admin.save();
+
+      const resAdmin = await Admin.findById(id);
+
+      res.json({
+        success: true,
+        data: {
+          admin: resAdmin
+        }
+      });
+    }
+  }
+);

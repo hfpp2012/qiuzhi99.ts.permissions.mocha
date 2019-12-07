@@ -87,3 +87,36 @@ export const updateRole = wrapAsync(
     }
   }
 );
+
+/**
+ * Add permissions fro role
+ *
+ * @Method POST
+ * @URL /api/admin/roles/:id/permissions
+ *
+ */
+export const permissions = wrapAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const { permissionIds } = req.body;
+    const { id } = req.params;
+
+    const role = await Role.findById(id);
+
+    if (role) {
+      role.permissions = permissionIds;
+
+      await role.save();
+
+      const resRole = await Role.findById(id);
+
+      res.json({
+        success: true,
+        data: {
+          role: resRole
+        }
+      });
+    } else {
+      throwRoleNotFoundError();
+    }
+  }
+);

@@ -12,6 +12,7 @@ export interface IAdminDocument extends Document {
   username: string;
   password: string;
   isAdmin: boolean;
+  roles: IRoleDocument["_id"][];
   role: IRoleDocument["_id"];
   generateToken: () => string;
 }
@@ -26,7 +27,15 @@ const adminSchema: Schema = new Schema(
       ref: "Role",
       exists: true,
       autopopulate: true
-    }
+    },
+    roles: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Role",
+        exists: true,
+        autopopulate: true
+      }
+    ]
   },
   { timestamps: true }
 );

@@ -4,6 +4,7 @@ import uniqueValidator from "mongoose-unique-validator";
 
 export interface IPermissionDocument extends Document {
   name: string;
+  nameCn: string;
 }
 
 const permissionSchema: Schema = new Schema(
