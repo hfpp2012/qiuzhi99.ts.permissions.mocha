@@ -46,7 +46,8 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node-dev --respawn src/index.ts",
-    "dev": "nodemon --exec ts-node --files src/index.ts",
-    "seed": "ts-node src/db/seed"
+    "dev": "nodemon --ignore 'src/tests/*.ts' --exec ts-node --files src/index.ts",
+    "seed": "ts-node src/db/seed",
+    "test": "TS_NODE_FILES=true NODE_ENV=test nodemon --exec mocha -r ts-node/register src/tests/*.spec.ts --exit"
   }
 }
