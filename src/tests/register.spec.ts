@@ -3,7 +3,7 @@ import { app } from "./helpers/tests-helper";
 import config from "../config/config";
 import { UNPROCESSABLE_ENTITY, OK } from "http-status-codes";
 
-const userToRegister = {
+export const userToRegister = {
   username: config.user.username,
   password: config.user.password,
   email: config.user.email,
