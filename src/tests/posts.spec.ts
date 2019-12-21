@@ -8,6 +8,7 @@ const postToTest = {
 };
 
 let resPost: any;
+let resUser: any;
 
 before(async () => {
   resPost = await chai
@@ -15,6 +16,15 @@ before(async () => {
     .post("/api/posts")
     .set("Authorization", authToken)
     .send(postToTest);
+
+  let user = { ...userToRegister };
+  user.username = "correctotherusername";
+
+  // 注册新的用户
+  resUser = await chai
+    .request(app)
+    .post("/api/users/register")
+    .send(user);
 });
 
 describe("Read Post", () => {
@@ -125,26 +135,10 @@ describe("Update Post", () => {
       });
 
       it("只能更新自己的 Post", async () => {
-        let user = { ...userToRegister };
-        user.username = "correctotherusername";
-
-        // 注册新的用户
-        const resUser = await chai
-          .request(app)
-          .post("/api/users/register")
-          .send(user);
-
-        // 用新的用户创建 Post
-        const newPost = await chai
-          .request(app)
-          .post("/api/posts")
-          .set("Authorization", `Bearer ` + resUser.body.data.token)
-          .send(postToTest);
-
         const res = await chai
           .request(app)
-          .put(`/api/posts/${newPost.body.data.post._id}`)
-          .set("Authorization", authToken)
+          .put(`/api/posts/${resPost.body.data.post._id}`)
+          .set("Authorization", `Bearer ` + resUser.body.data.token)
           .send({ body: "newBody" });
 
         expect(res).to.have.status(UNAUTHORIZED);
@@ -164,6 +158,86 @@ describe("Update Post", () => {
         expect(res.body.data).to.have.property("message");
         expect(res.body.data).to.have.property("post");
         expect(res.body.data.post.body).to.equal("newBody");
+      });
+    });
+  });
+});
+
+describe("Like Post", () => {
+  describe("POST /api/posts/:id/like", () => {
+    context("如果没有登录时", () => {
+      it("不能喜欢 Post", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${resPost.body.data.post._id}/like`);
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+    });
+
+    context("如果有登录时", () => {
+      it("喜欢 Post", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${resPost.body.data.post._id}/like`)
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(OK);
+        expect(res.body.success).to.equal(true);
+        expect(res.body.data.post.likes).to.not.be.empty;
+      });
+
+      it("不喜欢 Post", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${resPost.body.data.post._id}/like`)
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(OK);
+        expect(res.body.success).to.equal(true);
+        expect(res.body.data.post.likes).to.be.empty;
+      });
+    });
+  });
+});
+
+describe("Delete Post", () => {
+  describe("DELETE /api/posts/:id", () => {
+    context("如果没有登录时", () => {
+      it("不能删除 Post", async () => {
+        const res = await chai
+          .request(app)
+          .delete(`/api/posts/${resPost.body.data.post._id}`);
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+    });
+
+    context("如果有登录时", () => {
+      it("只能删除自己的 Post", async () => {
+        const res = await chai
+          .request(app)
+          .delete(`/api/posts/${resPost.body.data.post._id}`)
+          .set("Authorization", `Bearer ` + resUser.body.data.token);
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+
+      it("成功删除 Post", async () => {
+        const res = await chai
+          .request(app)
+          .delete(`/api/posts/${resPost.body.data.post._id}`)
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(OK);
+        expect(res.body.success).to.equal(true);
+        expect(res.body.data).to.have.property("message");
       });
     });
   });
