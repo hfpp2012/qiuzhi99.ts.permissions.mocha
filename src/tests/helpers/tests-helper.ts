@@ -7,11 +7,13 @@ import { Application } from "../../app";
 import { Express } from "express";
 import { before, after } from "mocha";
 import config from "../../config/config";
+import User, { IUserDocument } from "../../models/User";
 
 chai.use(chaiHttp);
 
 let application: Application;
 export let app: Express;
+export let currentUser: IUserDocument | null;
 export let authToken: string;
 
 before(async () => {
@@ -25,6 +27,8 @@ before(async () => {
     .post("/api/users/login")
     .send({ username: config.user.username, password: config.user.password });
   authToken = "Bearer " + res.body.data.token;
+
+  currentUser = await User.findOne({ username: config.user.username });
 
   console.log("## Starting test...");
 });

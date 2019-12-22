@@ -1,30 +1,35 @@
 import chai, { expect } from "chai";
-import { app, authToken } from "./helpers/tests-helper";
+import { app, authToken, currentUser } from "./helpers/tests-helper";
 import { UNAUTHORIZED, OK, UNPROCESSABLE_ENTITY } from "http-status-codes";
-import { userToRegister } from "./register.spec";
+import Post, { IPostDocument } from "../models/Post";
+import bcrypt from "bcryptjs";
+import User from "../models/User";
+import config from "../config/config";
 
 const postToTest = {
   body: "body"
 };
 
-let resPost: any;
-let resUser: any;
+let post: IPostDocument;
+let userToken: string;
 
 before(async () => {
-  resPost = await chai
-    .request(app)
-    .post("/api/posts")
-    .set("Authorization", authToken)
-    .send(postToTest);
+  // 创建新的 Post
+  const newPost = new Post({
+    ...postToTest,
+    user: currentUser!._id
+  });
+  post = await newPost.save();
 
-  let user = { ...userToRegister };
-  user.username = "correctotherusername";
-
-  // 注册新的用户
-  resUser = await chai
-    .request(app)
-    .post("/api/users/register")
-    .send(user);
+  // 注册一个新用户
+  const hashedPassword = await bcrypt.hash(config.user.password, 10);
+  const newUser = new User({
+    username: "correctotherusername",
+    email: config.user.email,
+    password: hashedPassword
+  });
+  const user = await newUser.save();
+  userToken = user.generateToken();
 });
 
 describe("Read Post", () => {
@@ -51,9 +56,7 @@ describe("Read Post", () => {
 
   describe("GET /api/posts/:id", () => {
     it("显示单个 post", async () => {
-      const res = await chai
-        .request(app)
-        .get(`/api/posts/${resPost.body.data.post._id}`);
+      const res = await chai.request(app).get(`/api/posts/${post._id}`);
 
       expect(res).to.have.status(OK);
       expect(res.body.success).to.equal(true);
@@ -112,7 +115,7 @@ describe("Update Post", () => {
       it("不能更新 Post", async () => {
         const res = await chai
           .request(app)
-          .put(`/api/posts/${resPost.body.data.post._id}`)
+          .put(`/api/posts/${post._id}`)
           .send(postToTest);
 
         expect(res).to.have.status(UNAUTHORIZED);
@@ -125,7 +128,7 @@ describe("Update Post", () => {
       it("body 为空不能更新 Post", async () => {
         const res = await chai
           .request(app)
-          .put(`/api/posts/${resPost.body.data.post._id}`)
+          .put(`/api/posts/${post._id}`)
           .set("Authorization", authToken)
           .send({ body: "" });
 
@@ -137,8 +140,8 @@ describe("Update Post", () => {
       it("只能更新自己的 Post", async () => {
         const res = await chai
           .request(app)
-          .put(`/api/posts/${resPost.body.data.post._id}`)
-          .set("Authorization", `Bearer ` + resUser.body.data.token)
+          .put(`/api/posts/${post._id}`)
+          .set("Authorization", `Bearer ` + userToken)
           .send({ body: "newBody" });
 
         expect(res).to.have.status(UNAUTHORIZED);
@@ -149,7 +152,7 @@ describe("Update Post", () => {
       it("填写了 body 可以更新 Post", async () => {
         const res = await chai
           .request(app)
-          .put(`/api/posts/${resPost.body.data.post._id}`)
+          .put(`/api/posts/${post._id}`)
           .set("Authorization", authToken)
           .send({ body: "newBody" });
 
@@ -167,9 +170,7 @@ describe("Like Post", () => {
   describe("POST /api/posts/:id/like", () => {
     context("如果没有登录时", () => {
       it("不能喜欢 Post", async () => {
-        const res = await chai
-          .request(app)
-          .post(`/api/posts/${resPost.body.data.post._id}/like`);
+        const res = await chai.request(app).post(`/api/posts/${post._id}/like`);
 
         expect(res).to.have.status(UNAUTHORIZED);
         expect(res.body.success).to.equal(false);
@@ -181,7 +182,7 @@ describe("Like Post", () => {
       it("喜欢 Post", async () => {
         const res = await chai
           .request(app)
-          .post(`/api/posts/${resPost.body.data.post._id}/like`)
+          .post(`/api/posts/${post._id}/like`)
           .set("Authorization", authToken);
 
         expect(res).to.have.status(OK);
@@ -192,7 +193,7 @@ describe("Like Post", () => {
       it("不喜欢 Post", async () => {
         const res = await chai
           .request(app)
-          .post(`/api/posts/${resPost.body.data.post._id}/like`)
+          .post(`/api/posts/${post._id}/like`)
           .set("Authorization", authToken);
 
         expect(res).to.have.status(OK);
@@ -207,9 +208,7 @@ describe("Delete Post", () => {
   describe("DELETE /api/posts/:id", () => {
     context("如果没有登录时", () => {
       it("不能删除 Post", async () => {
-        const res = await chai
-          .request(app)
-          .delete(`/api/posts/${resPost.body.data.post._id}`);
+        const res = await chai.request(app).delete(`/api/posts/${post._id}`);
 
         expect(res).to.have.status(UNAUTHORIZED);
         expect(res.body.success).to.equal(false);
@@ -221,8 +220,8 @@ describe("Delete Post", () => {
       it("只能删除自己的 Post", async () => {
         const res = await chai
           .request(app)
-          .delete(`/api/posts/${resPost.body.data.post._id}`)
-          .set("Authorization", `Bearer ` + resUser.body.data.token);
+          .delete(`/api/posts/${post._id}`)
+          .set("Authorization", `Bearer ` + userToken);
 
         expect(res).to.have.status(UNAUTHORIZED);
         expect(res.body.success).to.equal(false);
@@ -232,7 +231,7 @@ describe("Delete Post", () => {
       it("成功删除 Post", async () => {
         const res = await chai
           .request(app)
-          .delete(`/api/posts/${resPost.body.data.post._id}`)
+          .delete(`/api/posts/${post._id}`)
           .set("Authorization", authToken);
 
         expect(res).to.have.status(OK);
