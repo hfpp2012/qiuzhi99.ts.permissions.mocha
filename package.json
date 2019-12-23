@@ -39,6 +39,7 @@
     "chai-http": "^4.3.0",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
+    "nyc": "^15.0.0",
     "ts-node": "^8.5.2",
     "ts-node-dev": "^1.0.0-pre.43",
     "typescript": "^3.6.4"
@@ -48,6 +49,8 @@
     "start": "ts-node-dev --respawn src/index.ts",
     "dev": "nodemon --ignore 'src/tests/*.ts' --exec ts-node --files src/index.ts",
     "seed": "ts-node src/db/seed",
-    "test": "TS_NODE_FILES=true NODE_ENV=test nodemon --exec mocha -r ts-node/register src/tests/*.spec.ts --growl --exit"
+    "test": "TS_NODE_FILES=true NODE_ENV=test nodemon --exec mocha -r ts-node/register src/tests/*.spec.ts --growl --exit",
+    "test-no-nodemon": "TS_NODE_FILES=true NODE_ENV=test mocha -r ts-node/register src/tests/*.spec.ts --growl --exit",
+    "coverage": "nyc -r lcov -e .ts -x \"*.spec.ts\" yarn test-no-nodemon"
   }
 }

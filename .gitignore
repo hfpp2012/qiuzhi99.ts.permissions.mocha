@@ -3,3 +3,5 @@ dist
 .env
 logs
 yarn-error.log
+.nyc_output
+coverage

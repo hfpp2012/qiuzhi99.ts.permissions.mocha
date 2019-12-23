@@ -92,9 +92,11 @@ export const deleteComment = wrapAsync(
         await Comment.findByIdAndDelete(commentId);
         await post.save();
 
+        const resPost = await Post.findById(post.id);
+
         res.json({
           success: true,
-          data: { message: "comment was deleted successfully", post }
+          data: { message: "comment was deleted successfully", post: resPost }
         });
       } else {
         throwActionNotAllowedError();

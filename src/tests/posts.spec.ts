@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 import config from "../config/config";
 
-const postToTest = {
+const bodyToTest = {
   body: "body"
 };
 
@@ -16,7 +16,7 @@ let userToken: string;
 before(async () => {
   // 创建新的 Post
   const newPost = new Post({
-    ...postToTest,
+    ...bodyToTest,
     user: currentUser!._id
   });
   post = await newPost.save();
@@ -72,7 +72,7 @@ describe("Create Post", () => {
         const res = await chai
           .request(app)
           .post("/api/posts")
-          .send(postToTest);
+          .send(bodyToTest);
 
         expect(res).to.have.status(UNAUTHORIZED);
         expect(res.body.success).to.equal(false);
@@ -98,7 +98,7 @@ describe("Create Post", () => {
           .request(app)
           .post("/api/posts")
           .set("Authorization", authToken)
-          .send(postToTest);
+          .send(bodyToTest);
 
         expect(res).to.have.status(OK);
         expect(res.body.success).to.equal(true);
@@ -116,7 +116,7 @@ describe("Update Post", () => {
         const res = await chai
           .request(app)
           .put(`/api/posts/${post._id}`)
-          .send(postToTest);
+          .send(bodyToTest);
 
         expect(res).to.have.status(UNAUTHORIZED);
         expect(res.body.success).to.equal(false);
@@ -204,6 +204,100 @@ describe("Like Post", () => {
   });
 });
 
+describe("Create Comment", () => {
+  describe("POST /api/posts/:id/comments", () => {
+    context("如果没有登录时", () => {
+      it("不能创建评论", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${post._id}/comments`)
+          .send(bodyToTest);
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+    });
+
+    context("如果有登录时", () => {
+      it("内容为空不能创建评论", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${post._id}/comments`)
+          .send({ body: "" })
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(UNPROCESSABLE_ENTITY);
+        expect(res.body.success).to.equal(false);
+        expect(res.body.errors).to.have.property("body");
+      });
+
+      it("提交内容可以创建评论", async () => {
+        const res = await chai
+          .request(app)
+          .post(`/api/posts/${post._id}/comments`)
+          .send(bodyToTest)
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(OK);
+        expect(res.body.success).to.equal(true);
+        expect(res.body.data.post.comments).to.not.be.empty;
+      });
+    });
+  });
+});
+
+describe("Delete Comment From Post", () => {
+  let findPost: IPostDocument | null;
+  beforeEach(async () => {
+    findPost = await Post.findById(post.id);
+  });
+
+  describe("DELETE /api/posts/:id/comments/:commentId", () => {
+    context("如果没有登录时", () => {
+      it("不能删除评论", async () => {
+        const res = await chai
+          .request(app)
+          .delete(
+            `/api/posts/${post._id}/comments/${findPost!.comments[0]._id}`
+          );
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+    });
+
+    context("如果有登录时", () => {
+      it("不能删除别人的评论", async () => {
+        const res = await chai
+          .request(app)
+          .delete(
+            `/api/posts/${post._id}/comments/${findPost!.comments[0]._id}`
+          )
+          .set("Authorization", `Bearer ` + userToken);
+
+        expect(res).to.have.status(UNAUTHORIZED);
+        expect(res.body.success).to.equal(false);
+        expect(res.body).to.have.property("message");
+      });
+
+      it("可以删除评论", async () => {
+        const res = await chai
+          .request(app)
+          .delete(
+            `/api/posts/${post._id}/comments/${findPost!.comments[0]._id}`
+          )
+          .set("Authorization", authToken);
+
+        expect(res).to.have.status(OK);
+        expect(res.body.success).to.equal(true);
+        expect(res.body.data.post.comments).to.be.empty;
+      });
+    });
+  });
+});
+
 describe("Delete Post", () => {
   describe("DELETE /api/posts/:id", () => {
     context("如果没有登录时", () => {
@@ -217,7 +311,7 @@ describe("Delete Post", () => {
     });
 
     context("如果有登录时", () => {
-      it("只能删除自己的 Post", async () => {
+      it("不能删除别人的 Post", async () => {
         const res = await chai
           .request(app)
           .delete(`/api/posts/${post._id}`)
